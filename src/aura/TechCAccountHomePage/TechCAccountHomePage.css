@@ -1,0 +1,4 @@
+.THIS .acc-list{
+    max-height: calc(44vh - 100px);
+    overflow: scroll;
+}

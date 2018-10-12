@@ -1,0 +1,63 @@
+<aura:component >
+    <aura:attribute name="recId" type="string" access="PRIVATE"/>
+    <aura:attribute name="rec" type="Object" access="PRIVATE"/>
+    
+    <aura:attribute name="data" type="Object" />
+    <aura:handler name="change" value="{!v.data}" action="{!c.handleLoad}" />
+    
+    <aura:attribute name="fields" type="List" access="PRIVATE"
+                    default="['Name', 'AccountNumber', 'OwnerId', 
+                             'AccountSource', 'ParentId','AnnualRevenue', 'Type',
+                             'CreatedById','LastModifiedById', 'Industry', 
+                             'Description', 'Phone', 'Fax' ]" />
+    
+    <aura:if isTrue="{!not(empty(v.rec))}">
+        <lightning:card class="acc-details">
+            <aura:set attribute="title">
+                <div class="slds-page-header slds-page-header_vertical">
+                <div class="slds-media">
+                    <div class="slds-media__figure">
+                        <span class="slds-icon_container slds-icon-standard-account" title="Account">
+                            <lightning:icon iconName="standard:account" />
+                            <span class="slds-assistive-text">Account</span>
+                        </span>
+                    </div>
+                    <div class="slds-media__body">
+                        <div class="slds-page-header__name">
+                            <div class="slds-page-header__name-title">
+                                <h1>
+                                    <p>Account</p>
+                                    <span class="slds-page-header__title" title="{!v.rec.name}">
+                                        {!v.rec.name}
+                                    </span>
+                                </h1>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+                
+            </aura:set>
+            <p class="slds-p-horizontal_medium slds-p-top_medium acc-list slds-box">
+                <aura:if isTrue="{!not(empty(v.recId))}">
+                    <lightning:recordViewForm recordId="{!v.recId}" objectApiName="Account">
+                        <fieldset class="slds-form-element slds-form_compound">
+                            <div class="slds-form-element__control slds-p-left_x-small">
+                                <div class="slds-form-element__group"> 
+                                    <div class="slds-form-element__row slds-wrap">
+                                        <aura:iteration items="{!v.fields}" var="cus" > 
+                                            <div class="slds-form-element slds-size--1-of-2">
+                                                <lightning:outputField fieldName="{!cus}" />
+                                            </div>
+                                        </aura:iteration>
+                                    </div>  
+                                </div>
+                            </div>
+                        </fieldset>
+                        
+                    </lightning:recordViewForm>
+                </aura:if>
+            </p>
+        </lightning:card>
+    </aura:if>
+</aura:component>

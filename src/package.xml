@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Package xmlns="http://soap.sforce.com/2006/04/metadata">
+    <types>
+        <members>TechCAccountHomePageCtrl</members>
+        <members>TechCAccountHomePageCtrlTest</members>
+        <members>TechCTestFuel</members>
+        <name>ApexClass</name>
+    </types>
+    <types>
+        <members>TechCAccountDetails</members>
+        <members>TechCAccountHomePage</members>
+        <members>TechCToast</members>
+        <members>TechChallengeApp</members>
+        <members>TechcAccountCreation</members>
+        <members>TechcAccountDML</members>
+        <members>TechcAccountDeletion</members>
+        <members>TechcAccountEdit</members>
+        <members>TechcAccountUpdateSource</members>
+        <name>AuraDefinitionBundle</name>
+    </types>
+    <version>36.0</version>
+</Package>

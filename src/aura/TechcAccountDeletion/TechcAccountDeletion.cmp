@@ -1,0 +1,62 @@
+<aura:component >
+    
+	<aura:attribute name="isDelete" type="Boolean" default="false" /> 
+    <aura:attribute name="toast" type="Object" />
+    <aura:attribute name="recId" type="String" /> 
+    <aura:attribute name="simpleRecord" type="Object"/>
+    
+    <aura:attribute name="recordError" type="String" access="private"/>
+    
+    <aura:handler name="change" value="{!v.recId}" action="{!c.loadData}" />
+    <aura:if isTrue="{!not(empty(v.recId))}">
+        <force:recordData aura:id="recordHandler"
+                          recordId="{!v.recId}"
+                          fields="Id"
+                          targetError="{!v.recordError}"
+                          recordUpdated="{!c.handleRecordUpdated}" />
+    </aura:if>
+    <lightning:spinner alternativeText="Loading" size="medium" class="slds-hide slds-is-fixed"
+                       variant="brand"
+                       aura:id="delSpinner"/>
+    
+    <!-- Display the delete record form -->
+    <section role="dialog" aria-labelledby="Account-Deletion" aria-modal="true" aria-describedby="Account-Deletion" class="slds-modal slds-fade-in-open">
+        <div class="slds-modal__container">
+            <header class="slds-modal__header">
+                <button class="slds-button slds-button_icon slds-modal__close slds-button_icon-inverse" title="Close"
+                        onclick="{!c.handleClose}">
+                    <lightning:icon iconName="utility:close" size="small" variant="inverse"/>
+                    <span class="slds-assistive-text">Close</span>
+                </button>
+                <h2 id="modal-heading-01" class="slds-text-heading_medium slds-hyphenate">
+                    <lightning:card iconName="action:delete" title="Delete Record"/>
+                </h2>
+            </header>
+            <div class="slds-modal__content slds-p-around_medium" id="modal-content-id-1">
+                
+                <div class="Delete Record">
+                    <lightning:card >
+                        <aura:set attribute="title" >
+                            <div class="slds-align_absolute-center">
+                                Are you sure ?
+                            </div>
+                            <!-- Display Lightning Data Service errors, if any -->
+                            <aura:if isTrue="{!not(empty(v.recordError))}">
+                                <div class="recordError">
+                                    {!v.recordError}
+                                </div>
+                            </aura:if>
+                        </aura:set>
+                        <div class="slds-p-horizontal--small slds-float_right">
+                            <lightning:button label="Cancel" onclick="{!c.handleClose}"/>
+                            <lightning:button label="Delete Record" variant="destructive" onclick="{!c.handleDeleteRecord}"/>
+                        </div>
+                    </lightning:card>
+                </div>
+                
+                
+            </div>
+        </div>
+    </section>
+    <div class="slds-backdrop slds-backdrop_open"></div>
+</aura:component>

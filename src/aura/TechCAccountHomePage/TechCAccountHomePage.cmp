@@ -1,0 +1,236 @@
+<aura:component controller="TechCAccountHomePageCtrl" implements="force:appHostable">
+    <aura:attribute name="toast" type="Object" /> 
+    <aura:attribute name="accList" type="List" default="[]" /> 
+    <aura:attribute name="isCreate" type="Boolean" default="false" /> 
+    <aura:attribute name="isDelete" type="Boolean" default="false" />
+    <aura:attribute name="isEdit" type="Boolean" default="false" />
+    <aura:attribute name="isUpdateAccountSource" type="Boolean" default="false" />
+    <aura:attribute name="isMassDelete" type="Boolean" default="false" />
+    
+    <aura:handler name="init" value="{!this}" action="{!c.doInit}" />
+    <aura:handler event="c:TechcAccountDML" action="{!c.handleTechcAccountDML}" />
+    
+    <lightning:spinner alternativeText="Loading" size="medium" class="slds-hide slds-is-fixed"
+                       variant="brand"
+                       aura:id="homeSpinner"/>
+    <lightning:card >
+        <aura:set attribute="title">
+            <div class="slds-page-header slds-page-header_vertical">
+                <div class="slds-media">
+                    <div class="slds-media__figure">
+                        <span class="slds-icon_container slds-icon-standard-account" title="Account">
+                            <lightning:icon iconName="standard:account" size="small"/>
+                            <span class="slds-assistive-text">Account</span>
+                        </span>
+                    </div>
+                    <div class="slds-media__body">
+                        <div class="slds-page-header__name">
+                            <div class="slds-page-header__name-title">
+                                <h1>
+                                    <span class="slds-page-header__title" title="Accounts">Accounts</span>
+                                </h1>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </aura:set>
+        <aura:set attribute="footer">
+            <div class="slds-align_absolute-center">
+                Tech Challenge - Capgemini
+            </div>
+        </aura:set>
+        <aura:set attribute="actions">
+            <lightning:button label="Delete" onclick="{!c.handleMassDelete}"
+                              title="Delete"
+                              disabled="{!v.accList.length == 0}"/>
+            <lightning:button label="Update Account Source" onclick="{!c.handleUpdateSource}"
+                              title="Update Account Source"
+                              disabled="{!v.accList.length == 0}"/>
+            <lightning:button label="New" onclick="{!c.handleNew}"/>
+        </aura:set>
+        <p class="slds-p-horizontal_small slds-box">
+            <aura:if isTrue="{!not(empty(v.toast))}">
+                <c:TechCToast toast="{!v.toast}" aura:id="TechCToast"/>
+            </aura:if>
+            <div class="acc-list">
+                <aura:if isTrue="{!v.accList.length > 0}">
+                    <table aria-multiselectable="true" class="slds-table slds-table_bordered slds-table_fixed-layout slds-table_resizable-cols" role="grid">
+                        <thead>
+                            <tr class="slds-line-height_reset">
+                                <th class="slds-text-title_caps slds-text-align_right" scope="col" style="width: 3.25rem;">
+                                    <span id="column-group-header" class="slds-assistive-text">Choose a row</span>
+                                    <div class="slds-th__action slds-th__action_form">
+                                        <lightning:input type="checkbox" 
+                                                         label="Select All" 
+                                                         variant="label-hidden"
+                                                         aura:id="chkSelectAll"
+                                                         onchange="{!c.handleSelectAll}"/>
+                                    </div>
+                                </th>
+                                <th aria-label="Action" class="slds-text-title_caps " scope="col">
+                                    <div class="slds-grid slds-grid_vertical-align-center slds-has-flexi-truncate">
+                                        <span class="slds-truncate" >Action</span>
+                                    </div>
+                                </th>
+                                <th aria-label="Account Name" class="slds-text-title_caps " scope="col">
+                                    <div class="slds-grid slds-grid_vertical-align-center slds-has-flexi-truncate">
+                                        <span class="slds-truncate" title="Account Name">Account Name</span>
+                                    </div>
+                                </th>
+                                <th aria-label="Account Number" class="slds-text-title_caps " scope="col">
+                                    <div class="slds-grid slds-grid_vertical-align-center slds-has-flexi-truncate">
+                                        <span class="slds-truncate" title="Account Number">Account Number</span>
+                                    </div>
+                                </th>
+                                <th aria-label="Account Owner" class="slds-text-title_caps " scope="col">
+                                    <div class="slds-grid slds-grid_vertical-align-center slds-has-flexi-truncate">
+                                        <span class="slds-truncate" title="Account Owner">Account Owner</span>
+                                    </div>
+                                </th>
+                                <th aria-label="Account Source" class="slds-text-title_caps " scope="col">
+                                    <div class="slds-grid slds-grid_vertical-align-center slds-has-flexi-truncate">
+                                        <span class="slds-truncate" title="Account Source">Account Source</span>
+                                    </div>
+                                </th>
+                                <th aria-label="Annual Revenue" class="slds-text-title_caps " scope="col">
+                                    <div class="slds-grid slds-grid_vertical-align-center slds-has-flexi-truncate">
+                                        <span class="slds-truncate" title="Annual Revenue">Annual Revenue</span>
+                                    </div>
+                                </th>
+                                <th aria-label="Type" class="slds-text-title_caps " scope="col">
+                                    <div class="slds-grid slds-grid_vertical-align-center slds-has-flexi-truncate">
+                                        <span class="slds-truncate" title="Type">Type</span>
+                                    </div>
+                                </th>
+                                <th aria-label="Industry" class="slds-text-title_caps " scope="col">
+                                    <div class="slds-grid slds-grid_vertical-align-center slds-has-flexi-truncate">
+                                        <span class="slds-truncate" title="Industry">Industry</span>
+                                    </div>
+                                </th>
+                                <th aria-label="Created By" class="slds-text-title_caps " scope="col">
+                                    <div class="slds-grid slds-grid_vertical-align-center slds-has-flexi-truncate">
+                                        <span class="slds-truncate" title="Created By">Created By</span>
+                                    </div>
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <aura:iteration items="{!v.accList}" var="acc" indexVar="index">
+                                <tr aria-selected="false" class="slds-hint-parent">
+                                    <td class="slds-text-align_right" role="gridcell">
+                                        <lightning:input type="checkbox" 
+                                                         label="Basic option" 
+                                                         variant="label-hidden"
+                                                         checked="{!acc.isSelected}"
+                                                         onchange="{!c.handleSelect}"/>
+                                    </td>
+                                    <td role="gridcell">
+                                        <a href="javascript:void(0);"
+                                           id="{!acc.Id}"
+                                           onclick="{!c.handleEdit}">
+                                            Edit
+                                        </a>
+                                        &nbsp;|&nbsp;
+                                        <a href="javascript:void(0);"
+                                           id="{!acc.Id}"
+                                           onclick="{!c.handleDelete}">
+                                            Delete
+                                        </a>
+                                    </td>
+                                    <th scope="row" tabindex="{!index}">
+                                        <div class="slds-truncate" title="{!acc.Name}">
+                                            <a href="javascript:void(0);" data-id="{!acc.Id}" tabindex="-1"
+                                               onclick="{!c.showDetails}" data-name="{!acc.Name}">
+                                                {!acc.Name}
+                                            </a>
+                                        </div>
+                                    </th>
+                                    <td role="gridcell">
+                                        <div class="slds-truncate" title="{!acc.AccountNumber}">{!acc.AccountNumber}</div>
+                                    </td>
+                                    <td role="gridcell">
+                                        <div class="slds-truncate" title="{!acc.Owner.Name}">{!acc.Owner.Name}</div>
+                                    </td>
+                                    <td role="gridcell">
+                                        <div class="slds-truncate" title="{!acc.AccountSource}">{!acc.AccountSource}</div>
+                                    </td>
+                                    <td role="gridcell">
+                                        <div class="slds-truncate" title="{!acc.AnnualRevenue}">
+                                            <p><lightning:formattedNumber value="{!acc.AnnualRevenue}" style="currency" currencyCode="USD"/></p>
+                                        </div>
+                                    </td>
+                                    <td role="gridcell">
+                                        <div class="slds-truncate" title="{!acc.Type}">{!acc.Type}</div>
+                                    </td>
+                                    <td role="gridcell">
+                                        <div class="slds-truncate" title="{!acc.Industry}">
+                                            {!acc.Industry}
+                                        </div>
+                                    </td>
+                                    <td role="gridcell">
+                                        <div class="slds-truncate" title="{!acc.CreatedBy.Name}">
+                                            {!acc.CreatedBy.Name}    
+                                        </div>
+                                    </td>
+                                </tr>
+                            </aura:iteration>
+                        </tbody>
+                    </table>
+                </aura:if>
+                <aura:if isTrue="{!v.accList.length == 0}">
+                    <div class="slds-align_absolute-center">
+                        No record found!
+                    </div>
+                </aura:if>
+            </div>
+            <c:TechCAccountDetails aura:id="accDetails" />
+            <aura:if isTrue="{!v.isCreate}">
+                <c:TechcAccountCreation toast="{!v.toast}" isCreate="{!v.isCreate}" />
+            </aura:if>
+            <aura:if isTrue="{!v.isDelete}">
+                <c:TechcAccountDeletion toast="{!v.toast}" isDelete="{!v.isDelete}" 
+                                        aura:id="accDeletion" />
+            </aura:if>
+            <aura:if isTrue="{!v.isEdit}">
+                <c:TechcAccountEdit toast="{!v.toast}" isEdit="{!v.isEdit}" 
+                                    aura:id="accEdit"/>
+            </aura:if>
+            <aura:if isTrue="{!v.isUpdateAccountSource}" >
+                <c:TechcAccountUpdateSource isUpdateAccountSource="{!v.isUpdateAccountSource}"/>
+            </aura:if>
+            <aura:if isTrue="{!v.isMassDelete}">
+                <section role="dialog" aria-labelledby="Account-delete" aria-modal="true" aria-describedby="Account-delete" class="slds-modal slds-fade-in-open">
+                    <div class="slds-modal__container">
+                        <header class="slds-modal__header">
+                            <button class="slds-button slds-button_icon slds-modal__close slds-button_icon-inverse" title="Close"
+                                    onclick="{!c.handleCloseModal}">
+                                <lightning:icon iconName="utility:close" size="small" variant="inverse"/>
+                                <span class="slds-assistive-text">Close</span>
+                            </button>
+                            <h2 id="modal-heading-01" class="slds-text-heading_medium slds-hyphenate">
+                                <lightning:card iconName="action:delete" title="Delete Record"/>
+                            </h2>
+                        </header>
+                        <div class="slds-modal__content slds-p-around_medium" id="modal-content-id-1">
+                            <div class="Delete Record">
+                                <lightning:card >
+                                    <aura:set attribute="title" >
+                                        <div class="slds-align_absolute-center">
+                                            Are you sure ?
+                                        </div>
+                                    </aura:set>
+                                    <div class="slds-p-horizontal--small slds-float_right">
+                                        <lightning:button label="Cancel" onclick="{!c.handleCloseModal}"/>
+                                        <lightning:button label="Delete" variant="destructive" onclick="{!c.handleMassDeleteConfirm}"/>
+                                    </div>
+                                </lightning:card>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+                <div class="slds-backdrop slds-backdrop_open"></div>
+            </aura:if>
+        </p>
+    </lightning:card>
+</aura:component>
