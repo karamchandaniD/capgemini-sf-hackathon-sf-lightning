@@ -25,7 +25,7 @@ The following problems are being solved as described among three modules:
 # Solution Architecture
 As we have common things with all the requirements so build a single base Lightning component using via Lightning App.
 * Used Lightning-Data-Service(LDS) to improve the performance and speed up.
-* Less Apex iteration to avoid waiting of server response.
+* Less Apex interaction to avoid waiting of server response.
 * Used standard Lightning tags.
 * Only a single Lightning event is being used for communication between components
 * Also done Test cases with some details/comments.
